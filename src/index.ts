@@ -47,6 +47,17 @@ export function Method(target, key: string, descriptor: PropertyDescriptor) {
   (target.methods || (target.methods = {}))[key] = descriptor.value;
 }
 
+export function GQLResolver(target: any, key: any, descriptor: any) {
+  const { getGQLMethods: gqlMets } = target.methods || (target.methods = {});
+
+  const graphQLMethods = {
+    ...((gqlMets && gqlMets()) || {}),
+    [key]: descriptor.value
+  };
+  (target.methods || (target.methods = {}))['getGQLMethods'] = () =>
+    graphQLMethods;
+}
+
 export function Event(options?: EventOptions) {
   return function (target, key: string, descriptor: PropertyDescriptor) {
     (target.events || (target.events = {}))[key] = options
